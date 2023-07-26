@@ -12,4 +12,6 @@ struct ExpenseItem: Identifiable, Codable, Equatable {
     let name: String
     let type: ExpenseType
     let amount: Double
+    let note: String
+    let date: Date    
 }

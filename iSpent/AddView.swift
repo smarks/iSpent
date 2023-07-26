@@ -1,8 +1,9 @@
 //
 //  AddView.swift
-//  iExpense
+//  iSpent
 //
-//  Created by Paul Hudson on 01/11/2021.
+//  Original code created by Paul Hudson on 01/11/2021.
+//  Extended by Spencer Marks starting on 07/25/2023
 //
 
 import SwiftUI
@@ -14,8 +15,15 @@ struct AddView: View {
     @State private var name = ""
     @State private var type = ExpenseType.necessary
     @State private var amount = 0.0
+    @State private var notes = ""
+    @State private var date = Date.now
+    @State private var stringAmount = "0.0"
 
-    let types = [ ExpenseType.necessary, ExpenseType.discretionary]
+    let types = [ExpenseType.necessary, ExpenseType.discretionary]
+
+    var disableSave: Bool {
+        name.isEmpty
+    }
 
     var body: some View {
         NavigationView {
@@ -28,17 +36,26 @@ struct AddView: View {
                         Text(label)
                     }
                 }
+                NumericTextField(numericText: $stringAmount, amountDouble: $amount)
 
-                TextField("Amount", value: $amount, format: .localCurrency)
-                    .keyboardType(.decimalPad)
+                TextField("Notes", text: $notes)
+
+                DatePicker(selection: $date, in: ...Date.now, displayedComponents: .date) {
+                    Text("Date")
+                }
             }
             .navigationTitle("Add new expense")
             .toolbar {
-                Button("Save") {
-                    let item = ExpenseItem(name: name, type: type, amount: amount)
-                    expenses.items.append(item)
-                    dismiss()
-                }
+               
+                    Button("Cancel") {
+                        dismiss()
+                    }
+                  
+                    Button("Save") {
+                        let item = ExpenseItem(name: name, type: type, amount: amount, note: notes, date: date)
+                        expenses.items.append(item)
+                        dismiss()
+                    }.disabled(disableSave)
             }
         }
     }
